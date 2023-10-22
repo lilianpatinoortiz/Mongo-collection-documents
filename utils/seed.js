@@ -1,35 +1,60 @@
-const connection = require('../config/connection');
-const User = require('../models/User');
-const { getRandomName } = require('./data');
+const connection = require("../config/connection");
+const { Thought, User } = require("../models");
+const {
+  getRandomUsername,
+  getRandomEmail,
+  getRandomThoughts,
+} = require("./data");
 
-// Start the seeding runtime timer
-console.time('seeding');
+connection.on("error", (err) => err);
 
-// Creates a connection to mongodb
-connection.once('open', async () => {
+connection.once("open", async () => {
   // Delete the collections if they exist
-  let userCheck = await connection.db.listCollections({ name: 'users' }).toArray();
-  if (userCheck.length) {
-    await connection.dropCollection('users');
+  let usersCheck = await connection.db
+    .listCollections({ name: "users" })
+    .toArray();
+  if (usersCheck.length) {
+    await connection.dropCollection("users");
   }
 
-  // Empty arrays for randomly generated users
+  let toughtsCheck = await connection.db
+    .listCollections({ name: "thoughts" })
+    .toArray();
+  if (toughtsCheck.length) {
+    await connection.dropCollection("thoughts");
+  }
+
+  // users
   const users = [];
+  for (let i = 0; i < 20; i++) {
+    const thought = getRandomThoughts(1);
 
-  for (let i = 0; i < 10; i++) {
-    const name = getRandomName();
-    const newUser = {
-      first: name.split(' ')[0],
-      last: name.split(' ')[1],
-      age: Math.floor(Math.random() * 99 + 1),
-    };
-    users.push(newUser);
+    const username = getRandomUsername();
+    const email = getRandomEmail();
+
+    users.push({
+      username,
+      email,
+    });
   }
 
-  // Wait for the users to be inserted into the database
   await User.collection.insertMany(users);
 
+  // thoughts
+  const thoughts = [];
+
+  thoughts.push({
+    thought,
+    username,
+    userId,
+  });
+
+  await Thought.collection.insertMany(thoughts);
+
+  // Log out the seed data to indicate what should appear in the database
   console.table(users);
-  console.timeEnd('seeding complete 🌱');
+  console.info("Seeding users complete! 🌱");
+  console.table(thoughts);
+  console.info("Seeding thoughts complete! 🌱");
   process.exit(0);
 });

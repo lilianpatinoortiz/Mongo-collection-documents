@@ -47,18 +47,54 @@ module.exports = {
         return res.status(404).json({ message: "No user with that ID" });
       }
 
-      //await Student.deleteMany({ _id: { $in: course.students } });
+      await Thought.deleteMany({ _id: { $in: user.thoughts } });
       res.json({ message: "User and thoughts deleted!" });
     } catch (err) {
       res.status(500).json(err);
     }
   },
   // Update a user
-  async updateCourse(req, res) {
+  async updateUser(req, res) {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
+        { runValidators: true, new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "No user with this id!" });
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  // Create a friend
+  async createFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $push: { friends: req.params.friendId } },
+        { runValidators: true, new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "No user with this id!" });
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  // Delete a friend
+  async deleteFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }
       );
 
