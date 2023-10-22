@@ -40,7 +40,7 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndDelete({
-        _id: req.params.courseId,
+        _id: req.params.userId,
       });
 
       if (!user) {
@@ -76,7 +76,7 @@ module.exports = {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $push: { friends: req.params.friendId } },
+        { $push: { friends: req.params.friendId } }, // push the friend in the array
         { runValidators: true, new: true }
       );
 
@@ -94,7 +94,7 @@ module.exports = {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $pull: { friends: req.params.friendId } },
+        { $pull: { friends: req.params.friendId } }, // pop the friend from the array
         { runValidators: true, new: true }
       );
 
