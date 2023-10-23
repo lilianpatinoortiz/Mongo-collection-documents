@@ -70,7 +70,7 @@ To run the project in your local machine:
 ## Usage
 
 Please use insomnia to test the apis!
-Here is the link to the recoording video: 
+Here is the link to the recoording video: https://drive.google.com/file/d/10S_0lBoknqP6KDh55_I4BPE_CwlMyb4h/view?usp=share_link
 
 ## Testing
 
